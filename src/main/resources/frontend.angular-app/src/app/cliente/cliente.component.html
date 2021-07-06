@@ -1,0 +1,181 @@
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<hr>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" style="color: white;" href="">Gerenciamento de Clientes</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02"
+    aria-controls="navbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" data-bs-toggle="modal" data-bs-target="#addClienteModal">Adicionar Cliente <span
+            class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input type="search" (ngModelChange)="searchCliente(key.value)"  #key="ngModel" ngModel name="key" id="searchNome" class="form-control mr-sm-2" placeholder="Procure um cliente">
+    </form>
+  </div>
+</nav>
+<div class="container bootstrap snippets bootdey">
+  <div class="row" id="main-container">
+    <div class="col-lg-12">
+      <div class="main-box no-header clearfix">
+        <div class="main-box-body clearfix">
+          <div class="table-responsive">
+            <table class="table user-list">
+              <thead>
+                <tr>
+                  <th><span>Cliente</span></th>
+                  <th><span>Telefone</span></th>
+                  <th>&nbsp;</th>
+                  <th><span>Email</span></th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cliente of clientes">
+                  <td>
+                    <img src="https://image.flaticon.com/icons/png/512/141/141784.png" alt="">
+                    <a href="#" class="user-link">{{cliente?.nome}} {{cliente?.sobrenome}}</a>
+                  </td>
+                  <td>{{cliente?.telefone}}</td>
+                  <td class="text-center">
+                    <span class="label label-default"></span>
+                  </td>
+                  <td>
+                    <a href="#">{{cliente?.email}}</a>
+                  </td>
+                  <td style="width: 20%;">
+                    <a class="table-link text-info" (click)="onOpenModal(cliente, 'edit')">
+                      <span class="fa-stack">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                      </span>
+                    </a>
+                    <a class="table-link danger" (click)="onOpenModal(cliente, 'delete')">
+                      <span class="fa-stack">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                      </span>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Adicionando um Cliente Modal-->
+<div class="modal fade" id="addClienteModal" tabindex="-1" aria-labelledby="addClienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addClienteModalLabel">Adicionando um Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #addForm="ngForm" (ngSubmit)="onAddCliente(addForm)">
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" ngModel name="nome" class="form-control" id="nome" placeholder="Nome" required>
+          </div>
+          <div class="form-group">
+            <label for="sobrenome">Sobrenome</label>
+            <input type="text" ngModel name="sobrenome" class="form-control" id="sobrenome" placeholder="sobrenome"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone</label>
+            <input type="text" ngModel name="telefone" class="form-control" id="telefone" placeholder="telefone"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" ngModel name="email" class="form-control" id="email" placeholder="email"
+              required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="add-cliente-form" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" [disabled]="addForm.invalid" class="btn btn-primary"
+          (click)="onAddCliente(addForm)">Adicionar</button>
+          <button type="submit"class="btn btn-primary" (click)="addCliente()">Adicionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Editando um Cliente Modal-->
+<div class="modal fade" id="editClienteModal" tabindex="-1" aria-labelledby="editClienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editClienteModalLabel">Editando o Cliente {{editCliente?.nome}}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="form-group">
+            <label for="nome">Nome</label>
+            <input type="text" ngModel="{{editCliente?.nome}}" name="nome" class="form-control" id="nome"
+              placeholder="Nome" required>
+          </div>
+          <input type="hidden" ngModel="{{editCliente?.id}}" name="id" class="form-control" id="id">
+          <div class="form-group">
+            <label for="sobrenome">Sobrenome</label>
+            <input type="text" ngModel="{{editCliente?.sobrenome}}" name="sobrenome" class="form-control" id="sobrenome"
+              placeholder="sobreome" required>
+          </div>
+          <div class="form-group">
+            <label for="telefone">Telefone</label>
+            <input type="text" ngModel="{{editCliente?.telefone}}" name="telefone" class="form-control" id="telefone"
+              placeholder="telefone" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" ngModel="{{editCliente?.email}}" name="email" class="form-control" id="email"
+              placeholder="email" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="update-cliente-form" data-bs-dismiss="modal">Fechar</button>
+        <button type="submit" (click)="onUpdateCliente(editForm.value)" class="btn btn-primary">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Deletando um Cliente Modal-->
+<div class="modal fade" id="deleteClienteModal" tabindex="-1" aria-labelledby="deleteClienteModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteClienteModalLabel">Deletando um Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Tem certeza que deseja deletar {{deleteCliente?.nome}}</p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">FECHAR</button>
+          <button (click)="onDeleteCliente(deleteCliente.id)" class="btn btn-danger" data-bs-dismiss="modal">DELETAR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="clientes?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+    <div class="alert alert-info" role="alert">
+      <h4 class="alert-heading">Não há clientes</h4>
+      <p>Nenhum cliente foi econtrado.</p>
+    </div>
+  </div>
