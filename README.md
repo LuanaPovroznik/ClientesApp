@@ -1,3 +1,3 @@
 # ClientesApp
 
-# App for customer management 
+# App to simulate customer management.
